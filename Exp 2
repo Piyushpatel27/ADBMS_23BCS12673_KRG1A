@@ -1,0 +1,54 @@
+--QUESTION 1: ORGANIZATIONAL HEIRACHY EXPLORER
+
+create table employee_tbl(emp_id integer primary key, emp_name varchar(50) NOT NULL, dept varchar(50) NOT NULL, manager_id int NULL );
+
+alter table employee_tbl
+add constraint fk_manager FOREIGN KEY(manager_id) REFERENCES employee_tbl(emp_id);
+
+insert into employee_tbl(emp_id,emp_name, dept, manager_id) values(1,'Alice', 'HR',null);
+insert into employee_tbl(emp_id,emp_name, dept, manager_id) values(2,'Bob', 'Finance',1);
+insert into employee_tbl(emp_id,emp_name, dept, manager_id) values(3,'Jay', 'IT',1);
+insert into employee_tbl(emp_id,emp_name, dept, manager_id) values(4,'William', 'IT',3);
+insert into employee_tbl(emp_id,emp_name, dept, manager_id) values(5,'Tony', 'Finance',2);
+
+select * from employee_tbl;
+
+select E1.emp_name, E1.dept ,  E2.emp_id as [manager_id], E2.dept as [manager_dept]
+FROM employee_tbl as E1
+INNER JOIN
+employee_tbl as E2
+ON E1.manager_id=E2.emp_id;
+
+
+--QUESTION 2: FINANCIAL FORECAST MATCHING WITH FALLBACK STRATEGY
+
+create table year_tbl(id integer , year int ,npv int  );
+
+insert into year_tbl(id, year, npv) values(1, 2018,100);
+insert into year_tbl(id, year, npv) values(7, 2020,30);
+insert into year_tbl(id, year, npv) values(13, 2019,40);
+insert into year_tbl(id, year, npv) values(1, 2019,113);
+insert into year_tbl(id, year, npv) values(2, 2008,121);
+insert into year_tbl(id, year, npv) values(3, 2009,99);
+insert into year_tbl(id, year, npv) values(11, 2020,12);
+insert into year_tbl(id, year, npv) values(7, 2019,0);
+
+create table query_tbl(id integer , year int );
+insert into query_tbl(id, year) values(1,2019);
+insert into query_tbl(id, year) values(2,2008);
+insert into query_tbl(id, year) values(3,2009);
+insert into query_tbl(id, year) values(7,2018);
+insert into query_tbl(id, year) values(7,2019);
+insert into query_tbl(id, year) values(7,2020);
+insert into query_tbl(id, year) values(13,2019);
+
+select * from year_tbl;
+select * from query_tbl;
+
+select Q.id, Q.year, ISNULL(Y.npv, 0) as npv
+from year_tbl as Y
+RIGHT JOIN
+query_tbl as Q
+ON
+Y.id= Q.id and Y.year = Q.year;
+
