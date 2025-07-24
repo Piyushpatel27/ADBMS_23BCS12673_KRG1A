@@ -1,0 +1,53 @@
+--QUESTION 1: Author-Book Relationship Using Joins and Basic SQL Operations
+
+create table tbl_author(author_id integer primary key , author_name varchar(50),country varchar(50) );
+insert into tbl_author(author_id, author_name, country) values(1011, 'Abdul Kalam', 'India');
+insert into tbl_author(author_id, author_name, country) values(1022, 'J.K. Rowling', 'UK');
+insert into tbl_author(author_id, author_name, country) values(1033, 'Chetan Bhagat', 'India');
+select * from tbl_author;
+
+create table tbl_book(book_id integer primary key, book_name varchar(50), author_id INTEGER,foreign key(author_id) references tbl_author(author_id));
+insert into tbl_book(book_id, book_name,author_id) values (11, 'Harry Potter',1022);
+insert into tbl_book(book_id, book_name,author_id) values (12, 'Panchtantra', 1033);
+insert into tbl_book(book_id, book_name, author_id) values (13, 'Wings of Fire',1011);
+select * from tbl_book;
+
+select b.book_name as [book_title], a.author_name, a.country 
+from tbl_book as b
+inner join 
+tbl_author as a
+on
+b.author_id = a.author_id;
+
+--QUESTION 2: Department-Course Subquery and Access Control
+
+create table tbl_dept (dept_id integer PRIMARY KEY,dept_name varchar(50));
+insert into tbl_dept (dept_id, dept_name) values(101, 'CSE');
+insert into tbl_dept (dept_id, dept_name) values(102, 'ECE');
+insert into tbl_dept (dept_id, dept_name) values(103, 'Civil');
+insert into tbl_dept (dept_id, dept_name) values(104, 'Mechanical');
+insert into tbl_dept (dept_id, dept_name) values(105, 'IT');
+
+create table tbl_course (course_id integer PRIMARY KEY,course_name varchar(50),dept_id integer,
+                         FOREIGN KEY (dept_id) REFERENCES tbl_dept(dept_id));
+insert into tbl_course (course_id, course_name, dept_id) values(1, 'Java', 101);
+insert into tbl_course (course_id, course_name, dept_id) values(2, 'C++', 101);
+insert into tbl_course (course_id, course_name, dept_id) values(3, 'Physics', 102);
+insert into tbl_course (course_id, course_name, dept_id) values(4, 'DBMS', 105);
+insert into tbl_course (course_id, course_name, dept_id) values(5, 'DSA', 101);
+insert into tbl_course (course_id, course_name, dept_id) values(6, 'Maths', 102);
+insert into tbl_course (course_id, course_name, dept_id) values(7, 'CAD', 103);
+insert into tbl_course (course_id, course_name, dept_id) values(8, 'Thermodynamics', 104);
+insert into tbl_course (course_id, course_name, dept_id) values(9, 'Web Dev', 105);
+insert into tbl_course (course_id, course_name, dept_id) values(10, 'Python', 105);
+
+select * from tbl_dept;
+select * from tbl_course;
+
+select dept_id,dept_name
+from tbl_dept
+where dept_id IN (
+    select dept_id
+    from tbl_course
+    group by dept_id
+    having count(*) > 2);
